@@ -25,7 +25,6 @@ class GestorTareas {
 
   listarTareas() {
     console.clear();
-    //this.tareas.forEach(t => console.log(`${t.titulo} - ${t.completada ? '✔' : '❌'}`));
     this.tareas.forEach(t => console.log(`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`));
   }
 
@@ -36,6 +35,16 @@ class GestorTareas {
   listarCompletadas() {
     return this.tareas.filter(t => t.completada);
   }
+}
+
+//Diccionario
+const CHAT_COMPONENT = {
+    ELEMENTS: {
+        LIST: document.querySelector('#listaTareas'),
+        FORM: document.querySelector('#formTarea'),
+        INPUT: document.querySelector('#tituloTarea'),
+//        FILTER_COMPLETED: document.querySelector('#botonFiltrarCompletadas')
+    }
 }
 
 //Carga el array de tareas con un retardo simulado por promesa
@@ -52,21 +61,21 @@ function cargarTareas() {
 }
 
 const gestor = new GestorTareas();
-const lista = document.getElementById("listaTareas");
-const form = document.getElementById("formTarea");
 
 async function iniciar() {
   //Consigna para el flujo
   const tareasIniciales = await cargarTareas();
-
   tareasIniciales.forEach(t => gestor.tareas.push(t));
+
   //chequeo que este todo bien cargado
   console.log("Tareas cargadas correctamente");
   renderizar();
 }
 
-form.addEventListener("submit", e => {
+//form.addEventListener("submit", e => {
+  CHAT_COMPONENT.ELEMENTS.FORM.addEventListener("submit", e => {
   e.preventDefault();
+
   const titulo = document.getElementById("tituloTarea").value;
 
 //gestor.agregarTarea(titulo);  
@@ -76,19 +85,24 @@ form.addEventListener("submit", e => {
   renderizar();
 });
 
+
 function renderizar() {
-  lista.innerHTML = "";
+ // lista.innerHTML = "";
+  CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
   gestor.tareas.forEach(t => {
     const li = document.createElement("li");
-    li.textContent =`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
 
+    li.textContent =`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
     li.addEventListener("click", () => {
-      t.toggleEstado();   
-      renderizar();
+    t.toggleEstado();   
+    renderizar();
     });
-    lista.appendChild(li);
+    CHAT_COMPONENT.ELEMENTS.LIST.appendChild(li);
   });
 }
 
 iniciar();
+
+
+
 
