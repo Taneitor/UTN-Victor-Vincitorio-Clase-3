@@ -43,7 +43,7 @@ const CHAT_COMPONENT = {
         LIST: document.querySelector('#listaTareas'),
         FORM: document.querySelector('#formTarea'),
         INPUT: document.querySelector('#tituloTarea'),
-//        FILTER_COMPLETED: document.querySelector('#botonFiltrarCompletadas')
+        FILTER_COMPLETED: document.querySelector('#botonFiltrarCompletadas')
     }
 }
 
@@ -68,7 +68,7 @@ async function iniciar() {
   tareasIniciales.forEach(t => gestor.tareas.push(t));
 
   //chequeo que este todo bien cargado
-  console.log("Tareas cargadas correctamente");
+  console.log("Tareas cargadas ok!! ");
   renderizar();
 }
 
@@ -81,17 +81,17 @@ async function iniciar() {
 //gestor.agregarTarea(titulo);  
   const id = gestor.tareas.length + 1; // Generar un ID simple basado en la longitud actual
   gestor.agregarTarea(id, titulo);
-  document.getElementById("tituloTarea").value = "";// Blanqueo el titulo para la proxima carga
+  CHAT_COMPONENT.ELEMENTS.INPUT.value = "";// Blanqueo el titulo para la proxima carga
+//  document.getElementById("tituloTarea").value = "";// Blanqueo el titulo para la proxima carga
   renderizar();
 });
 
-
-function renderizar() {
+/*function renderizar() {
  // lista.innerHTML = "";
   CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
+
   gestor.tareas.forEach(t => {
     const li = document.createElement("li");
-
     li.textContent =`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
     li.addEventListener("click", () => {
     t.toggleEstado();   
@@ -99,10 +99,26 @@ function renderizar() {
     });
     CHAT_COMPONENT.ELEMENTS.LIST.appendChild(li);
   });
+}*/
+
+function renderizar(lista = gestor.tareas) {
+  CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
+
+  lista.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
+
+    CHAT_COMPONENT.ELEMENTS.FILTER_COMPLETED.addEventListener("click", () => {
+      const completadas = gestor.listarCompletadas();
+      renderizar(completadas);
+    });
+
+    li.addEventListener("click", () => {
+      t.toggleEstado();
+      renderizar(); // vuelve a mostrar todas después de cambiar estado
+    });
+    CHAT_COMPONENT.ELEMENTS.LIST.appendChild(li);
+  });
 }
 
 iniciar();
-
-
-
-
