@@ -1,3 +1,4 @@
+// Clase que referencia a las tareas
 class Tarea {
   constructor(id, titulo) {
     this.id = id;
@@ -10,19 +11,22 @@ class Tarea {
   }
 }
 
+// clase para gestionar las tareas 
 class GestorTareas {
   constructor() {
     this.tareas = [];
   }
 
-  agregarTarea(titulo) {
-    const nueva = new Tarea(Date.now(), titulo);
+  agregarTarea(id, titulo) {
+//
+    const nueva = new Tarea(id, titulo);
     this.tareas.push(nueva);
   }
 
   listarTareas() {
     console.clear();
-    this.tareas.forEach(t => console.log(`${t.titulo} - ${t.completada ? '✔' : '❌'}`));
+    //this.tareas.forEach(t => console.log(`${t.titulo} - ${t.completada ? '✔' : '❌'}`));
+    this.tareas.forEach(t => console.log(`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`));
   }
 
   buscarPorTitulo(titulo) {
@@ -34,6 +38,7 @@ class GestorTareas {
   }
 }
 
+//Carga el array de tareas con un retardo simulado por promesa
 function cargarTareas() {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -51,8 +56,11 @@ const lista = document.getElementById("listaTareas");
 const form = document.getElementById("formTarea");
 
 async function iniciar() {
+  //Consigna para el flujo
   const tareasIniciales = await cargarTareas();
+
   tareasIniciales.forEach(t => gestor.tareas.push(t));
+  //chequeo que este todo bien cargado
   console.log("Tareas cargadas correctamente");
   renderizar();
 }
@@ -60,8 +68,11 @@ async function iniciar() {
 form.addEventListener("submit", e => {
   e.preventDefault();
   const titulo = document.getElementById("tituloTarea").value;
-  gestor.agregarTarea(titulo);
-  document.getElementById("tituloTarea").value = "";
+
+//gestor.agregarTarea(titulo);  
+  const id = gestor.tareas.length + 1; // Generar un ID simple basado en la longitud actual
+  gestor.agregarTarea(id, titulo);
+  document.getElementById("tituloTarea").value = "";// Blanqueo el titulo para la proxima carga
   renderizar();
 });
 
@@ -69,9 +80,10 @@ function renderizar() {
   lista.innerHTML = "";
   gestor.tareas.forEach(t => {
     const li = document.createElement("li");
-    li.textContent = `${t.titulo} - ${t.completada ? '✔' : '❌'}`;
+    li.textContent =`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
+
     li.addEventListener("click", () => {
-      t.toggleEstado();
+      t.toggleEstado();   
       renderizar();
     });
     lista.appendChild(li);
