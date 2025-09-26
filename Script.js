@@ -1,9 +1,10 @@
 // Clase que referencia a las tareas
 class Tarea {
-  constructor(id, titulo) {
+  constructor(id, titulo, completada = false) {
+    //modofica la clase para aceptar el estado de completada en el constructor
     this.id = id;
     this.titulo = titulo;
-    this.completada = false;
+    this.completada = completada; //nuevo atributo
   }
 
   toggleEstado() {
@@ -11,50 +12,53 @@ class Tarea {
   }
 }
 
-// clase para gestionar las tareas 
+// clase para gestionar las tareas
 class GestorTareas {
   constructor() {
     this.tareas = [];
   }
 
-  agregarTarea(id, titulo) {
-//
-    const nueva = new Tarea(id, titulo);
+  agregarTarea(id, titulo, completada = false) {
+    //modificas el metodo para aceptar el estado de completada
+    //
+    const nueva = new Tarea(id, titulo, completada);
     this.tareas.push(nueva);
   }
 
   listarTareas() {
     console.clear();
-    this.tareas.forEach(t => console.log(`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`));
+    this.tareas.forEach((t) =>
+      console.log(`${t.id} - ${t.titulo} - ${t.completada ? "✔ Completa" : "❌ Incompleta"}`)
+    );
   }
 
   buscarPorTitulo(titulo) {
-    return this.tareas.find(t => t.titulo === titulo);
+    return this.tareas.find((t) => t.titulo === titulo);
   }
 
   listarCompletadas() {
-    return this.tareas.filter(t => t.completada);
+    return this.tareas.filter((t) => t.completada);
   }
 }
 
 //Diccionario
 const CHAT_COMPONENT = {
-    ELEMENTS: {
-        LIST: document.querySelector('#listaTareas'),
-        FORM: document.querySelector('#formTarea'),
-        INPUT: document.querySelector('#tituloTarea'),
-        FILTER_COMPLETED: document.querySelector('#botonFiltrarCompletadas')
-    }
-}
+  ELEMENTS: {
+    LIST: document.querySelector("#listaTareas"),
+    FORM: document.querySelector("#formTarea"),
+    INPUT: document.querySelector("#tituloTarea"),
+    FILTER_COMPLETED: document.querySelector("#botonFiltrarCompletadas"),
+  },
+};
 
 //Carga el array de tareas con un retardo simulado por promesa
 function cargarTareas() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
         new Tarea(1, "Estudiar JavaScript"),
         new Tarea(2, "Leer documentación"),
-        new Tarea(3, "Practicar ejercicios")
+        new Tarea(3, "Practicar ejercicios"),
       ]);
     }, 2000);
   });
@@ -65,53 +69,41 @@ const gestor = new GestorTareas();
 async function iniciar() {
   //Consigna para el flujo
   const tareasIniciales = await cargarTareas();
-  tareasIniciales.forEach(t => gestor.tareas.push(t));
+  tareasIniciales.forEach((t) => gestor.tareas.push(t));
 
   //chequeo que este todo bien cargado
   console.log("Tareas cargadas ok!! ");
   renderizar();
 }
 
-//form.addEventListener("submit", e => {
-  CHAT_COMPONENT.ELEMENTS.FORM.addEventListener("submit", e => {
+CHAT_COMPONENT.ELEMENTS.FORM.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const titulo = document.getElementById("tituloTarea").value;
+  const titulo = CHAT_COMPONENT.ELEMENTS.INPUT.value.trim();
+  if (!titulo) return;
 
-//gestor.agregarTarea(titulo);  
-  const id = gestor.tareas.length + 1; // Generar un ID simple basado en la longitud actual
+  const id = gestor.tareas.length + 1;
+
+  // Agregamos la tarea como incompleta
   gestor.agregarTarea(id, titulo);
-  CHAT_COMPONENT.ELEMENTS.INPUT.value = "";// Blanqueo el titulo para la proxima carga
-//  document.getElementById("tituloTarea").value = "";// Blanqueo el titulo para la proxima carga
+
+  // Buscamos la tarea recién agregada
+  const nuevaTarea = gestor.tareas.find((t) => t.id === id);
+  if (nuevaTarea) {
+    nuevaTarea.toggleEstado(); // Cambiamos su estado
+  }
+
+  CHAT_COMPONENT.ELEMENTS.INPUT.value = "";
   renderizar();
 });
 
-/*function renderizar() {
- // lista.innerHTML = "";
-  CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
-
-  gestor.tareas.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent =`${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
-    li.addEventListener("click", () => {
-    t.toggleEstado();   
-    renderizar();
-    });
-    CHAT_COMPONENT.ELEMENTS.LIST.appendChild(li);
-  });
-}*/
 
 function renderizar(lista = gestor.tareas) {
   CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
 
-  lista.forEach(t => {
+  lista.forEach((t) => {
     const li = document.createElement("li");
-    li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? '✔' : '❌'}`;
-
-    CHAT_COMPONENT.ELEMENTS.FILTER_COMPLETED.addEventListener("click", () => {
-      const completadas = gestor.listarCompletadas();
-      renderizar(completadas);
-    });
+    li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? "✔ Completa" : "❌ Incompleta"}`;
 
     li.addEventListener("click", () => {
       t.toggleEstado();
