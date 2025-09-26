@@ -74,6 +74,12 @@ body {
         color: green;
     }
 
+.tarea-item {
+  cursor: pointer;
+}
+
+
+
 
 
 

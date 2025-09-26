@@ -62,6 +62,7 @@ function cargarTareas() {
   });
 }
 
+//Instacio a la clase 
 const gestor = new GestorTareas();
 
 async function iniciar() {
@@ -102,7 +103,7 @@ function renderizar(lista = gestor.tareas) {
     const li = document.createElement("li");
     li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? 'COMPLETA' : 'INCOMPLETA'}`;
 
-    li.style.cursor = "pointer"; // Cambio de cursor al pasar el mouse
+    li.style.cursor = "pointer"; // Cambio el estilo del cursor al pasar el mouse
 
     li.addEventListener("click", () => {
       t.toggleEstado();
