@@ -28,8 +28,7 @@ class GestorTareas {
   listarTareas() {
     console.clear();
     this.tareas.forEach((t) =>
-      console.log(`${t.id} - ${t.titulo} - ${t.completada ? "✔ Completa" : "❌ Incompleta"}`)
-    );
+      console.log(`${t.id} - ${t.titulo} - ${t.completada ? 'COMPLETA' : 'INCOMPLETA'}`));
   }
 
   buscarPorTitulo(titulo) {
@@ -47,7 +46,6 @@ const CHAT_COMPONENT = {
     LIST: document.querySelector("#listaTareas"),
     FORM: document.querySelector("#formTarea"),
     INPUT: document.querySelector("#tituloTarea"),
-    FILTER_COMPLETED: document.querySelector("#botonFiltrarCompletadas"),
   },
 };
 
@@ -56,9 +54,9 @@ function cargarTareas() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
-        new Tarea(1, "Estudiar JavaScript"),
-        new Tarea(2, "Leer documentación"),
-        new Tarea(3, "Practicar ejercicios"),
+        new Tarea(1, "Estudiar React"),
+        new Tarea(2, "Transcribir codigo"),
+        new Tarea(3, "Probar la ejecucion"),
       ]);
     }, 2000);
   });
@@ -84,26 +82,27 @@ CHAT_COMPONENT.ELEMENTS.FORM.addEventListener("submit", (e) => {
 
   const id = gestor.tareas.length + 1;
 
-  // Agregamos la tarea como incompleta
+  // Agrego la tarea como incompleta
   gestor.agregarTarea(id, titulo);
 
-  // Buscamos la tarea recién agregada
+  // Busco la tarea recién agregada
   const nuevaTarea = gestor.tareas.find((t) => t.id === id);
   if (nuevaTarea) {
-    nuevaTarea.toggleEstado(); // Cambiamos su estado
+    nuevaTarea.toggleEstado(); // Cambio su estado
   }
 
   CHAT_COMPONENT.ELEMENTS.INPUT.value = "";
   renderizar();
 });
 
-
 function renderizar(lista = gestor.tareas) {
   CHAT_COMPONENT.ELEMENTS.LIST.innerHTML = "";
 
   lista.forEach((t) => {
     const li = document.createElement("li");
-    li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? "✔ Completa" : "❌ Incompleta"}`;
+    li.textContent = `${t.id} - ${t.titulo} - ${t.completada ? 'COMPLETA' : 'INCOMPLETA'}`;
+
+    li.style.cursor = "pointer"; // Cambio de cursor al pasar el mouse
 
     li.addEventListener("click", () => {
       t.toggleEstado();
